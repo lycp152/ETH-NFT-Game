@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import twitterLogo from "./assets/twitter-logo.svg";
 import "./App.css";
+import SelectCharacter from "./Components/SelectCharacter";
 
 // Constantsを宣言する: constとは値書き換えを禁止した変数を宣言する方法です。
 const TWITTER_HANDLE = "あなたのTwitterハンドル";
@@ -9,6 +10,9 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const App = () => {
   // ユーザーのウォレットアドレスを格納するために使用する状態変数を定義します。
   const [currentAccount, setCurrentAccount] = useState(null);
+
+  // characterNFT と setCharacterNFT を初期化します。
+  const [characterNFT, setCharacterNFT] = useState(null);
 
   // ユーザーがMetaMaskを持っているか確認します。
   const checkIfWalletIsConnected = async () => {
@@ -37,6 +41,30 @@ const App = () => {
       console.log(error);
     }
   };
+
+  // レンダリングメソッド
+  const renderContent = () => {
+    // シナリオ1.
+    // ユーザーがWEBアプリにログインしていない場合、WEBアプリ上に、"Connect Wallet to Get Started" ボタンを表示します。
+    if (!currentAccount) {
+      return (
+        <div className="connect-wallet-container">
+          <img src="https://i.imgur.com/TXBQ4cC.png" alt="LUFFY" />
+          <button
+            className="cta-button connect-wallet-button"
+            onClick={connectWalletAction}
+          >
+            Connect Wallet to Get Started
+          </button>
+        </div>
+      );
+      // シナリオ2.
+      // ユーザーはWEBアプリにログインしており、かつ NFT キャラクターを持っていない場合、WEBアプリ上に、を表示します。
+    } else if (currentAccount && !characterNFT) {
+      return <SelectCharacter setCharacterNFT={setCharacterNFT} />;
+    }
+  };
+
   // connectWallet メソッドを実装します。
   const connectWalletAction = async () => {
     try {
@@ -66,20 +94,9 @@ const App = () => {
       <div className="container">
         <div className="header-container">
           <p className="header gradient-text">⚡️ METAVERSE GAME ⚡️</p>
-          <p className="sub-text">プレイヤーと協力してボスを倒そう!</p>
-          <div className="connect-wallet-container">
-            <img src="https://i.imgur.com/TXBQ4cC.png" alt="LUFFY" />
-            {/*
-             * ウォレットコネクトを起動するために使用するボタンを設定しています。
-             * メソッドを呼び出すために onClick イベントを追加することを忘れないでください。
-             */}
-            <button
-              className="cta-button connect-wallet-button"
-              onClick={connectWalletAction}
-            >
-              Connect Wallet To Get Started
-            </button>
-          </div>
+          <p className="sub-text">プレイヤーと協力してボスを倒そう✨</p>
+          {/* renderContent メソッドを呼び出します。*/}
+          {renderContent()}
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
