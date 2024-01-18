@@ -24,5 +24,8 @@
     "test": "npx hardhat test",
     "deploy": "npx hardhat run scripts/deploy.js --network sepolia",
     "start": "npx hardhat node"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.1"
   }
 }
