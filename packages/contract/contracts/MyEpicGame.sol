@@ -44,6 +44,11 @@ BigBoss public bigBoss;
   // ユーザーのアドレスと NFT の tokenId を紐づける mapping を作成しています。
   mapping(address => uint256) public nftHolders;
 
+  // ユーザーが NFT を Mint したこと示すイベント
+  event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
+  // ボスへの攻撃が完了したことを示すイベント
+  event AttackComplete(uint newBossHp, uint newPlayerHp);
+
   constructor(
     string[] memory characterNames,
     string[] memory characterImageURIs,
@@ -125,44 +130,73 @@ BigBoss public bigBoss;
 
     // 次に使用する人のためにtokenIdをインクリメントします。
     _tokenIds += 1;
+
+    // ユーザーが NFT を Mint したことをフロントエンドに伝えます。
+    emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
   }
 
   function attackBoss() public {
-  // 1. プレイヤーのNFTの状態を取得します。
-  uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
-  CharacterAttributes storage player = nftHolderAttributes[nftTokenIdOfPlayer];
-  console.log("\nPlayer w/ character %s about to attack. Has %s HP and %s AD", player.name, player.hp, player.attackDamage);
-  console.log("Boss %s has %s HP and %s AD", bigBoss.name, bigBoss.hp, bigBoss.attackDamage);
+    // 1. プレイヤーのNFTの状態を取得します。
+    uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
+    CharacterAttributes storage player = nftHolderAttributes[nftTokenIdOfPlayer];
+    console.log("\nPlayer w/ character %s about to attack. Has %s HP and %s AD", player.name, player.hp, player.attackDamage);
+    console.log("Boss %s has %s HP and %s AD", bigBoss.name, bigBoss.hp, bigBoss.attackDamage);
 
-  // 2. プレイヤーのHPが0以上であることを確認する。
-  require (
-    player.hp > 0,
-    "Error: character must have HP to attack boss."
-  );
-  // 3. ボスのHPが0以上であることを確認する。
-  require (
-    bigBoss.hp > 0,
-    "Error: boss must have HP to attack characters."
-  );
+    // 2. プレイヤーのHPが0以上であることを確認する。
+    require (
+      player.hp > 0,
+      "Error: character must have HP to attack boss."
+    );
+    // 3. ボスのHPが0以上であることを確認する。
+    require (
+      bigBoss.hp > 0,
+      "Error: boss must have HP to attack characters."
+    );
 
-  // 4. プレイヤーがボスを攻撃できるようにする。
-  if (bigBoss.hp < player.attackDamage) {
-    bigBoss.hp = 0;
-  } else {
-    bigBoss.hp = bigBoss.hp - player.attackDamage;
+    // 4. プレイヤーがボスを攻撃できるようにする。
+    if (bigBoss.hp < player.attackDamage) {
+      bigBoss.hp = 0;
+    } else {
+      bigBoss.hp = bigBoss.hp - player.attackDamage;
+    }
+    // 5. ボスがプレイヤーを攻撃できるようにする。
+    if (player.hp < bigBoss.attackDamage) {
+      player.hp = 0;
+    } else {
+      player.hp = player.hp - bigBoss.attackDamage;
+    }
+
+    // プレイヤーの攻撃をターミナルに出力する。
+    console.log("Player attacked boss. New boss hp: %s", bigBoss.hp);
+    // ボスの攻撃をターミナルに出力する。
+    console.log("Boss attacked player. New player hp: %s\n", player.hp);
+
+    // ボスへの攻撃が完了したことをフロントエンドに伝えます。
+    emit AttackComplete(bigBoss.hp, player.hp);
   }
-  // 5. ボスがプレイヤーを攻撃できるようにする。
-  if (player.hp < bigBoss.attackDamage) {
-    player.hp = 0;
-  } else {
-    player.hp = player.hp - bigBoss.attackDamage;
+
+  function checkIfUserHasNFT() public view returns (CharacterAttributes memory) {
+    // ユーザーの tokenId を取得します。
+    uint256 userNftTokenId = nftHolders[msg.sender];
+
+    // ユーザーがすでにtokenIdを持っている場合、そのキャラクターの属性情報を返します。
+    if (userNftTokenId > 0) {
+      return nftHolderAttributes[userNftTokenId];
+    }
+    // それ以外の場合は、空文字を返します。
+    else {
+      CharacterAttributes memory emptyStruct;
+      return emptyStruct;
+    }
   }
 
-  // プレイヤーの攻撃をターミナルに出力する。
-  console.log("Player attacked boss. New boss hp: %s", bigBoss.hp);
-  // ボスの攻撃をターミナルに出力する。
-  console.log("Boss attacked player. New player hp: %s\n", player.hp);
-}
+  function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+    return defaultCharacters;
+  }
+
+  function getBigBoss() public view returns (BigBoss memory) {
+    return bigBoss;
+  }
 
   // nftHolderAttributes を更新して、tokenURI を添付する関数を作成
   function tokenURI(uint256 _tokenId) public view override returns (string memory) {

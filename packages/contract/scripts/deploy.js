@@ -1,9 +1,6 @@
 const main = async () => {
-  // これにより、`MyEpicGame` コントラクトがコンパイルされます。
-  // コントラクトがコンパイルされたら、コントラクトを扱うために必要なファイルが
-  // `artifacts` ディレクトリの直下に生成されます。
   const gameContractFactory = await hre.ethers.getContractFactory("MyEpicGame");
-  // Hardhat がローカルの Ethereum ネットワークを、コントラクトのためだけに作成します。
+
   const gameContract = await gameContractFactory.deploy(
     ["ZORO", "NAMI", "USOPP"], // キャラクターの名前
     [
@@ -23,20 +20,6 @@ const main = async () => {
   const nftGame = await gameContract.deployed();
 
   console.log("Contract deployed to:", nftGame.address);
-  let txn;
-  // 3体のNFTキャラクターの中から、3番目のキャラクターを Mint しています。
-  txn = await gameContract.mintCharacterNFT(2);
-
-  // Minting が仮想マイナーにより、承認されるのを待ちます。
-  await txn.wait();
-  txn = await gameContract.attackBoss();
-  await txn.wait();
-  console.log("First attack.");
-  txn = await gameContract.attackBoss();
-  await txn.wait();
-  console.log("Second attack.");
-
-  console.log("Done!");
 };
 const runMain = async () => {
   try {
