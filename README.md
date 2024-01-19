@@ -10,7 +10,8 @@
 
 3. ターミナルを開き、ディレクトリのルートで `yarn install` を実行します。
 
-4. `yarn client start` を実行してプロジェクトを開始します。
+4. `yarn client start` を実行してプロジェクトを開始します。<br/>
+（Node.jsのバージョンによるエラーが出てしまう場合は、環境変数`export NODE_OPTIONS=--openssl-legacy-provider` を設定します。）
 
 5. コーディングを始めましょう。
 
