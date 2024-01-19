@@ -1,8 +1,6 @@
 {
   "name": "contract",
   "version": "1.0.0",
-  "main": "index.js",
-  "license": "MIT",
   "private": true,
   "devDependencies": {
     "@ethersproject/abi": "^5.7.0",
@@ -15,10 +13,20 @@
     "@typechain/ethers-v5": "^11.0.0",
     "@typechain/hardhat": "^7.0.0",
     "chai": "^4.3.7",
+    "dotenv": "^16.3.1",
     "ethers": "5.4.7",
     "hardhat": "^2.14.0",
     "hardhat-gas-reporter": "^1.0.9",
     "solidity-coverage": "^0.8.2",
     "typechain": "^8.2.0"
+  },
+  "scripts": {
+    "run:script": "npx hardhat run scripts/run.js",
+    "test": "npx hardhat test",
+    "deploy": "npx hardhat run scripts/deploy.js --network sepolia",
+    "start": "npx hardhat node"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.1"
   }
 }
