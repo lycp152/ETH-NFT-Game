@@ -4,9 +4,9 @@ const main = async () => {
   const gameContract = await gameContractFactory.deploy(
     ["ZORO", "NAMI", "USOPP"], // キャラクターの名前
     [
-      "https://i.imgur.com/TZEhCTX.png", // キャラクターの画像
-      "https://i.imgur.com/WVAaMPA.png",
-      "https://i.imgur.com/pCMZeiM.png",
+      "QmW8sJXrdi2Rtambae9fVpGWuX15YJWBWuwz1D6jFvA5mr", // キャラクターの画像
+      "QmNz36YhahZ97zF5qRXxmJKKWUxo1ftCqXxVn9HcPMCqKE",
+      "QmS3Amogb2dGHYABTTNDocLVQZ5FLiwiJEN8h6hzAEyynD",
     ],
     [100, 200, 300],
     [100, 50, 25],
