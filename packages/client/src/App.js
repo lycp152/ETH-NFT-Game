@@ -5,6 +5,7 @@ import SelectCharacter from "./Components/SelectCharacter";
 import myEpicGame from "./utils/MyEpicGame.json";
 import { ethers } from "ethers";
 import { CONTRACT_ADDRESS, transformCharacterData } from "./constants";
+import Arena from "./Components/Arena";
 
 // Constantsを宣言する: constとは値書き換えを禁止した変数を宣言する方法です。
 const TWITTER_HANDLE = "あなたのTwitterハンドル";
@@ -76,9 +77,16 @@ const App = () => {
         </div>
       );
       // シナリオ2.
-      // ユーザーはWEBアプリにログインしており、かつ NFT キャラクターを持っていない場合、WEBアプリ上に、を表示します。
+      // ユーザーはWEBアプリにログインしており、かつ NFT キャラクターを持っていない場合、WEBアプリ上に、"SelectCharacter Component" を表示します。
     } else if (currentAccount && !characterNFT) {
       return <SelectCharacter setCharacterNFT={setCharacterNFT} />;
+      // シナリオ3.
+      // ユーザーはWEBアプリにログインしており、かつ NFT キャラクターを持っている場合、
+      // Arena でボスと戦います。
+    } else if (currentAccount && characterNFT) {
+      return (
+        <Arena characterNFT={characterNFT} setCharacterNFT={setCharacterNFT} />
+      );
     }
   };
 
